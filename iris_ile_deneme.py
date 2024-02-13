@@ -5,16 +5,12 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, f1_score
 import math
 
-# Veri setini yükleyin (örneğin, Iris veri seti kullanılabilir)
-# Burada kendi veri setinizi yükleyebilirsiniz.
-# X, y = load_your_dataset()
 
-# Örnek olarak Iris veri setini kullanalım:
 iris = datasets.load_iris()
 X = iris.data
 y = iris.target
 
-# Veri setini eğitim ve test setlerine ayırın
+# Veri setini eğitim ve test setlerine ayırma
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 
@@ -123,17 +119,17 @@ def pso_optimization(obj_func, n_iterations, n_particles, X_train, y_train, X_te
             C[i] += velocities[i, 0]
             gamma[i] += velocities[i, 1]
 
-            # Hiperparametre sınırlarını kontrol et
+            # Hiperparametre sınırlarını kontrol etme
             C[i] = np.clip(C[i], 0.1, 100)
             gamma[i] = np.clip(gamma[i], 0.1, 10)
 
-        # En iyi konumu güncelle
+        # En iyi konumu güncelleme
         current_best = min([(obj_func(c, g, X_train, y_train, X_test, y_test), (c, g)) for c, g in zip(C, gamma)],
                            key=lambda x: x[0])
         if current_best[0] < global_best[0]:
             global_best = current_best
 
-        # Bireysel en iyiyi güncelle
+        # Bireysel en iyiyi güncelleme
         for i in range(n_particles):
             if current_best[0] < obj_func(personal_best[0][i], personal_best[1][i], X_train, y_train, X_test, y_test):
                 personal_best[0][i] = np.copy(C[i])
@@ -142,21 +138,21 @@ def pso_optimization(obj_func, n_iterations, n_particles, X_train, y_train, X_te
     return global_best[1]
 
 
-# HHO ve PSO ile SVM'yi optimize et
+# HHO ve PSO ile SVM'yi optimize etme
 best_params_hho = hho_optimization(evaluate_svm_model, n_iterations=50, n_hawks=20, pa=0.8, fl=2, fh=3, X_train=X_train,
                                    y_train=y_train, X_test=X_test, y_test=y_test)
 best_params_pso = pso_optimization(evaluate_svm_model, n_iterations=50, n_particles=20, X_train=X_train,
                                    y_train=y_train, X_test=X_test, y_test=y_test)
 
-# En iyi parametrelerle SVM modellerini oluşturun
+# En iyi parametrelerle SVM modellerini oluşturma
 best_model_hho = SVC(C=best_params_hho[0], gamma=best_params_hho[1], kernel='rbf')
 best_model_pso = SVC(C=best_params_pso[0], gamma=best_params_pso[1], kernel='rbf')
 
-# En iyi parametrelerle SVM modellerini eğitin
+# En iyi parametrelerle SVM modellerini eğitme
 best_model_hho.fit(X_train, y_train)
 best_model_pso.fit(X_train, y_train)
 
-# Test seti üzerinde performansı değerlendirin
+# Test seti üzerinde performansı değerlendirme
 y_pred_hho = best_model_hho.predict(X_test)
 y_pred_pso = best_model_pso.predict(X_test)
 
@@ -166,7 +162,7 @@ f1_hho = f1_score(y_test, y_pred_hho, average='weighted')
 accuracy_pso = accuracy_score(y_test, y_pred_pso)
 f1_pso = f1_score(y_test, y_pred_pso, average='weighted')
 
-# Sonuçları yazdırın
+# Sonuçları yazdırma
 print("HHO ile Optimize Edilmiş SVM:")
 print("En iyi parametreler: C={}, gamma={}".format(best_params_hho[0], best_params_hho[1]))
 print("Accuracy:", accuracy_hho)
